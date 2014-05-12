@@ -1,0 +1,90 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:command="http://www.galasoft.ch/mvvmlight"
+        xmlns:Converters="clr-namespace:FB2MSSQL.Converters" x:Class="FB2MSSQL.MainWindow"
+        Title="MainWindow" Height="350" Width="525">
+    <Window.Resources>
+        <Converters:IntToVisible x:Key="IntToVisible"/>
+    </Window.Resources>
+    <Window.DataContext>
+        <Binding Path="Main" Source="{StaticResource Locator}"/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <GroupBox Header="Firebird">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <StackPanel>
+                    <TextBlock><Run Text="Connection String"/></TextBlock>
+                    <TextBox Text="{Binding ConnectionString, Mode=TwoWay}"/>
+                    <Button Content="Mostrar tabelas" IsEnabled="{Binding ThereIsConnectionString}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <command:EventToCommand Command="{Binding OnMostrarTabelas}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                    <CheckBox IsChecked="{Binding TodasMarcadas, Mode=TwoWay}" Content="Marcar todas"/>
+                </StackPanel>
+                <TreeView Grid.Row="1" ItemsSource="{Binding Tabelas}">
+                    <TreeView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding Checked, Mode=TwoWay}" Content="{Binding Name}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </Grid>
+        </GroupBox>
+        <GroupBox Grid.Column="1" Header="Microsoft SQL Server">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <StackPanel>
+                    <TextBlock><Run Text="Connection String"/></TextBlock>
+                    <TextBox Text="{Binding ConnectionStringMSSQL, Mode=TwoWay}"/>
+                    <Button Content="Mostrar tabelas" IsEnabled="{Binding ThereIsConnectionStringMSSQL}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <command:EventToCommand Command="{Binding OnMostrarTabelasMSSQL}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                    <CheckBox IsChecked="{Binding TodasMarcadasMSSQL, Mode=TwoWay}" Content="Marcar todas"/>
+                </StackPanel>
+                <TreeView Grid.Row="1" ItemsSource="{Binding TabelasMSSQL}">
+                    <TreeView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding Checked, Mode=TwoWay}" Content="{Binding Name}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </Grid>
+        </GroupBox>
+        <Button Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Iniciar migração">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Click">
+                    <command:EventToCommand Command="{Binding OnIniciarMigracao}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </Button>
+        <ListBox Grid.Row="0" Grid.ColumnSpan="2" ItemsSource="{Binding Log}" Visibility="{Binding Log.Count, Converter={StaticResource IntToVisible}, Mode=OneWay}"></ListBox>
+    </Grid>
+</Window>
